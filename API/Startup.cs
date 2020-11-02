@@ -25,9 +25,6 @@ namespace API
             
         }
 
-
-
-
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
@@ -35,11 +32,18 @@ namespace API
             {
                 options.UseSqlite(_config.GetConnectionString("DefaultConnection"));
             });
+            /*services.AddCors(options =>{
+            options.AddPolicy("CorsPolicy", x => x.AllowAnyOrigins()
+                               .AllowAnyHeader()
+                              .AllowAnyMethod());
+                              });*/
+            services.AddCors();                 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
             });
+            
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -56,6 +60,11 @@ namespace API
 
             app.UseRouting();
 
+            app.UseCors(x=>x.AllowAnyHeader()
+                            .AllowAnyMethod()
+                            .WithOrigins("https://localhost:4200"));
+            
+            //app.UseCors("CorsPolicy");
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
